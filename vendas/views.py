@@ -1,5 +1,5 @@
-from django.shortcuts import render, redirect
 import csv
+from django.shortcuts import render, redirect
 from .models import Venda
 from .forms import UploadFileForm
 from datetime import datetime
@@ -14,21 +14,20 @@ def upload_vendas(request):
             arquivo = request.FILES['arquivo']
             decoded_file = arquivo.read().decode('utf-8').splitlines()
             reader = csv.reader(decoded_file)
-            next(reader)
+            next(reader)  # Pular cabeçalho
 
             for row in reader:
                 usuario = row[0]
                 total_vendas = int(row[1])
-                horario = datetime.strptime(row(2), "%H:%H").time()
-
-                Venda.objects.create(usuario=usuario, total_vendas=total_vendas horario=horario)
+                horario = datetime.strptime(row[2], "%H:%M").time()
+                
+                Venda.objects.create(usuario=usuario, total_vendas=total_vendas, horario=horario)
 
             return redirect('ranking')
-        
-        else:
-            form = UploadFileForm()
+    else:
+        form = UploadFileForm()
 
-        return render(request, 'upload.html', {'form': form})
+    return render(request, 'upload.html', {'form': form})
     
 
 def ranking_vendas(request):
